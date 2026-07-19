@@ -446,6 +446,60 @@
       font-weight: 400;
     }
 
+    /* Download Special Photo Button Styling */
+    .photo-download-container {
+      margin-top: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .download-photo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      font-family: var(--font-body);
+      font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #ff4081 0%, #7928ca 50%, #4facfe 100%);
+      background-size: 200% auto;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.35),
+                  0 0 15px rgba(121, 40, 202, 0.25);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+      position: relative;
+      z-index: 10;
+    }
+
+    .download-photo-btn:hover {
+      background-position: right center;
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 14px 35px rgba(255, 64, 129, 0.55),
+                  0 0 25px rgba(79, 172, 254, 0.4);
+      color: #ffffff;
+    }
+
+    .download-photo-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .btn-icon {
+      font-size: 1.2rem;
+      animation: pulseCamera 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseCamera {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2) rotate(-6deg); }
+    }
+
     /* ==========================================================================
        SPINNING GRADIENT ANIMATED CARDS (WISHES AREA)
        ========================================================================== */
@@ -1732,6 +1786,15 @@
     <div class="wishes-header">
       <h1 class="birthday-title">🎉 Happy Birthday! 🎂</h1>
       <p class="birthday-subtitle">Wishing you a year filled with love, laughter, joy, and unforgettable moments.</p>
+
+      <!-- Download Special Photo Button -->
+      <div class="photo-download-container">
+        <a id="downloadPhotoBtn" class="download-photo-btn" href="https://raw.githubusercontent.com/Vibhathcross/chachuz-bday/main/special_photo.jpg" download="Birthday_Special_Photo.jpg" target="_blank" rel="noopener noreferrer">
+          <span class="btn-icon">📸</span>
+          <span>Download Special Birthday Photo</span>
+          <span class="btn-sparkle">✨</span>
+        </a>
+      </div>
     </div>
 
     <div class="wishes-grid">
@@ -2560,6 +2623,35 @@
         createFloatingHeart(e.clientX, e.clientY);
         launchConfetti();
       });
+
+      // Download Special Photo Button Click Event
+      const downloadPhotoBtn = document.getElementById('downloadPhotoBtn');
+      if (downloadPhotoBtn) {
+        downloadPhotoBtn.addEventListener('click', (e) => {
+          createFloatingHeart(e.clientX, e.clientY);
+          launchConfetti();
+
+          const githubRawUrl = 'https://raw.githubusercontent.com/Vibhathcross/chachuz-bday/main/special_photo.jpg';
+          const localUrl = 'special_photo.jpg';
+
+          fetch(localUrl)
+            .then(res => res.blob())
+            .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = url;
+              a.download = 'Birthday_Special_Photo.jpg';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              a.remove();
+            })
+            .catch(() => {
+              window.open(githubRawUrl, '_blank');
+            });
+        });
+      }
 
       function showWishGrantedBadge() {
         let wishBadge = document.getElementById('wishGrantedBadge');
