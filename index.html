@@ -1658,6 +1658,49 @@
       }
     }
 
+    /* Floating Top Full Screen Toggle Button */
+    .floating-fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1200;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 3vw, 0.95rem);
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
+                  inset 0 0 10px rgba(255, 255, 255, 0.1);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .floating-fullscreen-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4),
+                  0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .floating-fullscreen-btn:active {
+      transform: translateY(1px) scale(0.97);
+    }
+
+    .fs-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
     @media (max-width: 600px) {
       #phase3, #phase4, #phase5 {
         padding: 40px 16px 50px;
@@ -1696,6 +1739,12 @@
 
   <!-- Particle Confetti Canvas -->
   <canvas id="confettiCanvas"></canvas>
+
+  <!-- Floating Top Full Screen Toggle Button -->
+  <button id="floatingFullscreenBtn" class="floating-fullscreen-btn" aria-label="Toggle Full Screen">
+    <span class="fs-icon">⛶</span>
+    <span class="fs-label">Full Screen</span>
+  </button>
 
   <!-- Non-Blocking White Glassmorphic Top Banner for Telegram Messages -->
   <div id="glassMessageModal" class="glass-modal">
@@ -2521,6 +2570,47 @@
       if (exitFullscreenBtn) {
         exitFullscreenBtn.addEventListener('click', exitFullScreenMode);
       }
+
+      // Floating Full Screen Toggle Logic
+      const floatingFsBtn = document.getElementById('floatingFullscreenBtn');
+      const fsIcon = floatingFsBtn ? floatingFsBtn.querySelector('.fs-icon') : null;
+      const fsLabel = floatingFsBtn ? floatingFsBtn.querySelector('.fs-label') : null;
+
+      function isFullScreen() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+      }
+
+      function updateFullscreenButtonState() {
+        if (!floatingFsBtn) return;
+        if (isFullScreen()) {
+          if (fsIcon) fsIcon.textContent = '⤶';
+          if (fsLabel) fsLabel.textContent = 'Exit Full Screen';
+          floatingFsBtn.classList.add('in-fullscreen');
+        } else {
+          if (fsIcon) fsIcon.textContent = '⛶';
+          if (fsLabel) fsLabel.textContent = 'Full Screen';
+          floatingFsBtn.classList.remove('in-fullscreen');
+        }
+      }
+
+      function toggleFullScreen() {
+        if (isFullScreen()) {
+          exitFullScreenMode();
+        } else {
+          requestFullScreenMode();
+        }
+      }
+
+      if (floatingFsBtn) {
+        floatingFsBtn.addEventListener('click', (e) => {
+          createFloatingHeart(e.clientX, e.clientY);
+          toggleFullScreen();
+        });
+      }
+
+      ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+        document.addEventListener(evt, updateFullscreenButtonState);
+      });
 
       function startTypingAnimation(text, speed) {
         typedContent.textContent = '';
