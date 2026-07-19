@@ -139,6 +139,36 @@
       box-shadow: 0 6px 15px rgba(173, 20, 87, 0.18);
     }
 
+    /* Exit Full Screen Button */
+    .exit-fullscreen-btn {
+      padding: 16px 36px;
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+      font-weight: 600;
+      font-family: var(--font-body);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .exit-fullscreen-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 25px rgba(255, 0, 85, 0.35);
+    }
+
+    .exit-fullscreen-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
     /* ==========================================================================
        2. PHASE 1: INTRO SCREEN
        ========================================================================== */
@@ -1635,6 +1665,19 @@
         <p id="brotherMsgFeedback" class="guess-feedback"></p>
       </div>
 
+      <!-- Exit Full Screen Button -->
+      <div class="next-phase-container" style="margin-top: 32px;">
+        <button id="exitFullscreenBtn" class="exit-fullscreen-btn">
+          <span>Exit Full Screen</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 14 10 14 10 20"></polyline>
+            <polyline points="20 10 14 10 14 4"></polyline>
+            <line x1="14" y1="10" x2="21" y2="3"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1983,6 +2026,23 @@
         } else if (docEl.msRequestFullscreen) {
           docEl.msRequestFullscreen();
         }
+      }
+
+      function exitFullScreenMode() {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => console.log('Exit fullscreen info:', err));
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+
+      const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+      if (exitFullscreenBtn) {
+        exitFullscreenBtn.addEventListener('click', exitFullScreenMode);
       }
 
       function startTypingAnimation(text, speed) {
