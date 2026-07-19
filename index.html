@@ -798,37 +798,10 @@
     }
 
     /* ==========================================================================
-       6. PHASE 5: FINALE PAGE WITH DIRECT ANIMATING VIDEO & CROPPED BOTTOM
+       6. PHASE 5: FINALE PAGE WITH INTERACTIVE CAKE & QUESTIONNAIRE
        ========================================================================== */
-    /* Clip wrapper: only the upper half of the screen, overflow hidden clips bottom half of video */
-    #videoClipWrapper {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50vh;
-      overflow: hidden;
-      z-index: 9;
-      display: none;
-    }
-
-    #videoClipWrapper.visible {
-      display: block;
-    }
-
-    /* Video is 200% tall inside the 50vh wrapper so only its top half is visible */
-    #bgVideoSpring {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 200%;
-      object-fit: cover;
-      object-position: top center;
-    }
-
     #phase5 {
-      background: transparent;
+      background: radial-gradient(circle at center, #1a2035 0%, #080b12 100%);
       position: absolute;
       top: 0;
       left: 0;
@@ -840,26 +813,18 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 0;
+      padding: 50px 20px 60px;
+      text-align: center;
       z-index: 10;
-    }
-
-    .phase5-spacer {
-      height: 50vh;
-      width: 100%;
-      flex-shrink: 0;
-      pointer-events: none;
     }
 
     .finale-content {
       width: 100%;
-      background: #080b12;
-      display: none;
+      max-width: 650px;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 30px 20px 80px;
-      flex-shrink: 0;
       z-index: 11;
     }
 
@@ -1547,29 +1512,16 @@
   </div>
 
   <!-- ==========================================================================
-       PHASE 5: FINALE PAGE WITH DIRECT ANIMATING VIDEO BACKGROUND
+       PHASE 5: FINALE PAGE WITH INTERACTIVE CAKE & QUESTIONNAIRE
        ========================================================================== -->
-  <!-- ==========================================================================
-       PHASE 5: FINALE PAGE WITH DIRECT ANIMATING VIDEO BACKGROUND
-       ========================================================================== -->
-  
-  <!-- Video is placed OUTSIDE #phase5 so browser preloads it even when phase5 is hidden -->
-  <!-- Clip wrapper ensures only the TOP half of the video content is visible -->
-  <div id="videoClipWrapper">
-    <video id="bgVideoSpring" playsinline muted preload="auto">
-      <source src="create_a_vedio_of_d_animating.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-
   <div id="phase5" class="phase">
     <button id="backToPhase4" class="back-btn back-btn-glass" aria-label="Go Back">←</button>
-    <div id="finaleOverlay" style="position:fixed;top:0;left:0;width:100%;height:50%;background:linear-gradient(to bottom,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.45) 100%);z-index:10;pointer-events:none;display:none;"></div>
-
-    <!-- Transparent spacer so fixed video is visible in the top half -->
-    <div class="phase5-spacer"></div>
 
     <div class="finale-content">
+      <div class="finale-header">
+        <h1 class="finale-title">✨ Make A Birthday Wish! 🎂</h1>
+        <p class="finale-subtitle">Tap the candle below to blow it out and make your special wish come true!</p>
+      </div>
 
       <!-- Cake (compact, top of lower half) -->
       <div id="cakeContainer" class="cake-container">
@@ -1993,42 +1945,12 @@
         });
       });
 
-      if (bgVideoSpring) {
-        bgVideoSpring.addEventListener('ended', () => {
-          bgVideoSpring.pause(); // Pause video on its last scene frame
-        });
-      }
-
       toPhase5Btn.addEventListener('click', () => {
         // Stop birthday instrumental audio
         stopBdayAudio();
 
         switchPhase(phase4, phase5, () => {
           launchConfetti();
-
-          // Show the clip wrapper (video), overlay, and finale content
-          const finaleOverlay = document.getElementById('finaleOverlay');
-          const finaleContent = document.querySelector('.finale-content');
-          const videoClipWrapper = document.getElementById('videoClipWrapper');
-
-          if (videoClipWrapper) videoClipWrapper.classList.add('visible');
-          if (finaleOverlay) finaleOverlay.style.display = 'block';
-          if (finaleContent) finaleContent.classList.add('visible');
-
-          // Play video — it's been preloading in the background
-          bgVideoSpring.muted = true;
-          bgVideoSpring.loop = false;
-          bgVideoSpring.currentTime = 0;
-
-          const tryPlay = () => {
-            bgVideoSpring.play().then(() => {
-              console.log('Video playing!');
-            }).catch(err => {
-              console.log('Play blocked, retrying:', err);
-              setTimeout(tryPlay, 300);
-            });
-          };
-          tryPlay();
         });
       });
 
@@ -2073,19 +1995,6 @@
 
       if (backToPhase4) {
         backToPhase4.addEventListener('click', () => {
-          // Pause and reset spring video
-          if (bgVideoSpring) {
-            bgVideoSpring.pause();
-          }
-          // Hide top-level Phase 5 fixed elements
-          const videoClipWrapper = document.getElementById('videoClipWrapper');
-          const finaleOverlay = document.getElementById('finaleOverlay');
-          const finaleContent = document.querySelector('.finale-content');
-          
-          if (videoClipWrapper) videoClipWrapper.classList.remove('visible');
-          if (finaleOverlay) finaleOverlay.style.display = 'none';
-          if (finaleContent) finaleContent.classList.remove('visible');
-
           // Resume birthday instrumental audio
           playBdayInstrumental();
 
