@@ -798,10 +798,10 @@
     }
 
     /* ==========================================================================
-       6. PHASE 5: FINALE PAGE WITH INTERACTIVE CAKE & QUESTIONNAIRE
+       6. PHASE 5: FINALE PAGE WITH RED HEART RAIN & APPEALING QUESTION CARDS
        ========================================================================== */
     #phase5 {
-      background: radial-gradient(circle at center, #1a2035 0%, #080b12 100%);
+      background: radial-gradient(circle at center, #1b0a1a 0%, #0a0812 100%);
       position: absolute;
       top: 0;
       left: 0;
@@ -813,7 +813,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 50px 20px 60px;
+      padding: 50px 20px 70px;
       text-align: center;
       z-index: 10;
     }
@@ -948,15 +948,74 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
 
-    /* Guess Gift Section */
-    .guess-section {
+    /* Question Cards Styling */
+    .appealing-card {
       width: 100%;
-      max-width: 520px;
-      margin: 12px auto 0;
+      max-width: 540px;
+      margin-top: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 26px 22px 22px;
+      box-shadow: 0 15px 35px rgba(255, 0, 85, 0.15),
+                  inset 0 0 15px rgba(255, 255, 255, 0.05);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      position: relative;
+      z-index: 10;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .appealing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(255, 0, 85, 0.25),
+                  inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #ff2a6d 0%, #ff0055 100%);
+      color: #ffffff;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(255, 0, 85, 0.4);
+    }
+
+    /* Red Heart Rain Particles */
+    .heart-rain-particle {
+      position: fixed;
+      top: -40px;
+      pointer-events: none;
+      z-index: 2;
+      animation: heartRainFall linear forwards;
+      user-select: none;
+    }
+
+    @keyframes heartRainFall {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.85;
+      }
+      90% {
+        opacity: 0.85;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg) scale(1.1);
+        opacity: 0;
+      }
     }
 
     .guess-prompt {
@@ -1523,7 +1582,7 @@
         <p class="finale-subtitle">Tap the candle below to blow it out and make your special wish come true!</p>
       </div>
 
-      <!-- Cake (compact, top of lower half) -->
+      <!-- Birthday Cake Container -->
       <div id="cakeContainer" class="cake-container">
         <div class="cake-wrapper">
           <div class="candle">
@@ -1534,17 +1593,18 @@
         </div>
       </div>
 
-      <!-- Guess the gift section -->
-      <div class="guess-section">
+      <!-- Question Card 1: Guess the Gift -->
+      <div class="appealing-card">
+        <div class="card-badge">🎁 Question 1</div>
         <p class="guess-prompt">
-          Can you guess what's the <span>gift</span> I'm gonna give to you?<br>Type your guess below 🎁
+          Can you guess what's the <span>gift</span> I'm gonna give to you?
         </p>
         <div class="guess-input-row">
           <input
             id="guessInput"
             class="guess-input"
             type="text"
-            placeholder="Write your guess here..."
+            placeholder="Type your guess here..."
             maxlength="200"
           />
           <button id="guessSendBtn" class="guess-send-btn">
@@ -1554,8 +1614,9 @@
         <p id="guessFeedback" class="guess-feedback"></p>
       </div>
 
-      <!-- Message for brother section -->
-      <div class="guess-section" style="margin-top: 25px;">
+      <!-- Question Card 2: Message for Brother -->
+      <div class="appealing-card">
+        <div class="card-badge">👦 Question 2</div>
         <p class="guess-prompt">
           Any special message for your <span>brother</span>? 🌟
         </p>
@@ -1794,7 +1855,24 @@
       function clearPageAnimations() {
         if (particleInterval) clearInterval(particleInterval);
         if (balloonInterval) clearInterval(balloonInterval);
-        document.querySelectorAll('.glowing-particle, .floating-balloon').forEach(el => el.remove());
+        document.querySelectorAll('.glowing-particle, .floating-balloon, .heart-rain-particle').forEach(el => el.remove());
+      }
+
+      function spawnHeartRain(container) {
+        if (container.querySelectorAll('.heart-rain-particle').length > 35) return;
+        const heart = document.createElement('div');
+        heart.className = 'heart-rain-particle';
+        heart.innerHTML = ['❤️', '💖', '💕', '❣️', '💗'][Math.floor(Math.random() * 5)];
+        
+        const fontSize = Math.random() * 18 + 14;
+        heart.style.fontSize = `${fontSize}px`;
+        heart.style.left = `${Math.random() * 95}%`;
+        
+        const duration = Math.random() * 5 + 4;
+        heart.style.animationDuration = `${duration}s`;
+        
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), duration * 1000);
       }
 
       function spawnParticle(container) {
@@ -1860,6 +1938,8 @@
         } else if (phaseId === 'phase4') {
           particleInterval = setInterval(() => spawnParticle(phase4), 600);
           balloonInterval = setInterval(() => spawnBalloon(phase4), 2200);
+        } else if (phaseId === 'phase5') {
+          particleInterval = setInterval(() => spawnHeartRain(phase5), 300);
         }
       }
 
