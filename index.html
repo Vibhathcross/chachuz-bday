@@ -1781,71 +1781,139 @@
 
       preloadAudioBuffers();
 
+      // Active fade intervals map for HTML5 audio elements fallback
+      const activeFadeIntervals = new Map();
+
+      function fadeOutHtmlAudio(audioEl, durationMs = 1200) {
+        if (!audioEl) return;
+        if (activeFadeIntervals.has(audioEl)) {
+          clearInterval(activeFadeIntervals.get(audioEl));
+          activeFadeIntervals.delete(audioEl);
+        }
+        if (audioEl.paused) return;
+
+        const startVol = audioEl.volume;
+        const steps = durationMs / 30;
+        const stepAmount = startVol / steps;
+
+        const interval = setInterval(() => {
+          if (audioEl.volume > stepAmount) {
+            audioEl.volume = Math.max(0, audioEl.volume - stepAmount);
+          } else {
+            audioEl.volume = 0;
+            audioEl.pause();
+            clearInterval(interval);
+            activeFadeIntervals.delete(audioEl);
+          }
+        }, 30);
+
+        activeFadeIntervals.set(audioEl, interval);
+      }
+
+      function fadeInHtmlAudio(audioEl, durationMs = 1200, targetVol = 1.0) {
+        if (!audioEl) return;
+        if (activeFadeIntervals.has(audioEl)) {
+          clearInterval(activeFadeIntervals.get(audioEl));
+          activeFadeIntervals.delete(audioEl);
+        }
+
+        audioEl.volume = 0;
+        audioEl.loop = true;
+        const playPromise = audioEl.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            const steps = durationMs / 30;
+            const stepAmount = targetVol / steps;
+
+            const interval = setInterval(() => {
+              if (audioEl.volume + stepAmount < targetVol) {
+                audioEl.volume = Math.min(targetVol, audioEl.volume + stepAmount);
+              } else {
+                audioEl.volume = targetVol;
+                clearInterval(interval);
+                activeFadeIntervals.delete(audioEl);
+              }
+            }, 30);
+
+            activeFadeIntervals.set(audioEl, interval);
+          }).catch(err => console.log("Audio play error:", err));
+        }
+      }
+
       function playRainAudio() {
         if (audioCtx && rainBuffer) {
           if (audioCtx.state === 'suspended') audioCtx.resume();
+          if (rainSourceNode) {
+            try { rainSourceNode.stop(); rainSourceNode.disconnect(); } catch (e) {}
+          }
           rainSourceNode = audioCtx.createBufferSource();
           rainSourceNode.buffer = rainBuffer;
           rainSourceNode.loop = true;
 
           rainGainNode = audioCtx.createGain();
-          rainGainNode.gain.value = 1.0;
+          rainGainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+          rainGainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 1.2);
 
           rainSourceNode.connect(rainGainNode);
           rainGainNode.connect(audioCtx.destination);
           rainSourceNode.start(0);
         } else if (rainAudioElement) {
-          rainAudioElement.currentTime = 0;
-          rainAudioElement.loop = true;
-          rainAudioElement.play().catch(err => console.log("Audio playback warning:", err));
+          fadeInHtmlAudio(rainAudioElement, 1200, 1.0);
         }
       }
 
       function stopRainAudio() {
         if (rainGainNode && audioCtx) {
-          rainGainNode.gain.setValueAtTime(rainGainNode.gain.value, audioCtx.currentTime);
-          rainGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+          const currGain = rainGainNode.gain.value;
+          rainGainNode.gain.setValueAtTime(currGain, audioCtx.currentTime);
+          rainGainNode.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+          const nodeToStop = rainSourceNode;
           setTimeout(() => {
-            if (rainSourceNode) {
-              try { rainSourceNode.stop(); rainSourceNode.disconnect(); } catch (e) {}
+            if (nodeToStop) {
+              try { nodeToStop.stop(); nodeToStop.disconnect(); } catch (e) {}
             }
-          }, 850);
+          }, 1250);
         } else if (rainAudioElement) {
-          rainAudioElement.pause();
+          fadeOutHtmlAudio(rainAudioElement, 1200);
         }
       }
 
       function playBdayInstrumental() {
         if (audioCtx && bdayBuffer) {
           if (audioCtx.state === 'suspended') audioCtx.resume();
+          if (bdaySourceNode) {
+            try { bdaySourceNode.stop(); bdaySourceNode.disconnect(); } catch (e) {}
+          }
           bdaySourceNode = audioCtx.createBufferSource();
           bdaySourceNode.buffer = bdayBuffer;
           bdaySourceNode.loop = true;
 
           bdayGainNode = audioCtx.createGain();
-          bdayGainNode.gain.value = 1.0;
+          bdayGainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+          bdayGainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 1.2);
 
           bdaySourceNode.connect(bdayGainNode);
           bdayGainNode.connect(audioCtx.destination);
           bdaySourceNode.start(0);
         } else if (bdayAudioElement) {
-          bdayAudioElement.currentTime = 0;
-          bdayAudioElement.loop = true;
-          bdayAudioElement.play().catch(err => console.log("Bday audio playback warning:", err));
+          fadeInHtmlAudio(bdayAudioElement, 1200, 1.0);
         }
       }
 
       function stopBdayAudio() {
         if (bdayGainNode && audioCtx) {
-          bdayGainNode.gain.setValueAtTime(bdayGainNode.gain.value, audioCtx.currentTime);
-          bdayGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+          const currGain = bdayGainNode.gain.value;
+          bdayGainNode.gain.setValueAtTime(currGain, audioCtx.currentTime);
+          bdayGainNode.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+          const nodeToStop = bdaySourceNode;
           setTimeout(() => {
-            if (bdaySourceNode) {
-              try { bdaySourceNode.stop(); bdaySourceNode.disconnect(); } catch (e) {}
+            if (nodeToStop) {
+              try { nodeToStop.stop(); nodeToStop.disconnect(); } catch (e) {}
             }
-          }, 850);
+          }, 1250);
         } else if (bdayAudioElement) {
-          bdayAudioElement.pause();
+          fadeOutHtmlAudio(bdayAudioElement, 1200);
         }
       }
 
@@ -1860,29 +1928,30 @@
           lastPageSourceNode.loop = true;
 
           lastPageGainNode = audioCtx.createGain();
-          lastPageGainNode.gain.value = 1.0;
+          lastPageGainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+          lastPageGainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 1.2);
 
           lastPageSourceNode.connect(lastPageGainNode);
           lastPageGainNode.connect(audioCtx.destination);
           lastPageSourceNode.start(0);
         } else if (lastPageAudioElement) {
-          lastPageAudioElement.currentTime = 0;
-          lastPageAudioElement.loop = true;
-          lastPageAudioElement.play().catch(err => console.log("Last page audio playback warning:", err));
+          fadeInHtmlAudio(lastPageAudioElement, 1200, 1.0);
         }
       }
 
       function stopLastPageAudio() {
         if (lastPageGainNode && audioCtx) {
-          lastPageGainNode.gain.setValueAtTime(lastPageGainNode.gain.value, audioCtx.currentTime);
-          lastPageGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+          const currGain = lastPageGainNode.gain.value;
+          lastPageGainNode.gain.setValueAtTime(currGain, audioCtx.currentTime);
+          lastPageGainNode.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+          const nodeToStop = lastPageSourceNode;
           setTimeout(() => {
-            if (lastPageSourceNode) {
-              try { lastPageSourceNode.stop(); lastPageSourceNode.disconnect(); } catch (e) {}
+            if (nodeToStop) {
+              try { nodeToStop.stop(); nodeToStop.disconnect(); } catch (e) {}
             }
-          }, 850);
+          }, 1250);
         } else if (lastPageAudioElement) {
-          lastPageAudioElement.pause();
+          fadeOutHtmlAudio(lastPageAudioElement, 1200);
         }
       }
 
