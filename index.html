@@ -1402,6 +1402,11 @@
     <source src="bday_instrumental.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- Last Page Lounge Music Audio element -->
+  <audio id="lastPageAudio" loop preload="auto">
+    <source src="last_page_lounge_music.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- ==========================================================================
        PHASE 1: INTRO SCREEN
        ========================================================================== -->
@@ -1698,6 +1703,7 @@
       const bgVideoSpring = document.getElementById('bgVideoSpring');
       const rainAudioElement = document.getElementById('rainAudio');
       const bdayAudioElement = document.getElementById('bdayAudio');
+      const lastPageAudioElement = document.getElementById('lastPageAudio');
       const skipBtn = document.getElementById('skipBtn');
       const toPhase4Btn = document.getElementById('toPhase4Btn');
       const toPhase5Btn = document.getElementById('toPhase5Btn');
@@ -1741,6 +1747,10 @@
       let bdaySourceNode = null;
       let bdayGainNode = null;
 
+      let lastPageBuffer = null;
+      let lastPageSourceNode = null;
+      let lastPageGainNode = null;
+
       async function preloadAudioBuffers() {
         try {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -1757,6 +1767,12 @@
             .then(buf => audioCtx.decodeAudioData(buf))
             .then(decoded => { bdayBuffer = decoded; })
             .catch(err => console.log("Bday audio decode info:", err));
+
+          fetch('last_page_lounge_music.mp3')
+            .then(res => res.arrayBuffer())
+            .then(buf => audioCtx.decodeAudioData(buf))
+            .then(decoded => { lastPageBuffer = decoded; })
+            .catch(err => console.log("Last page audio decode info:", err));
 
         } catch (e) {
           console.warn("Web Audio API decode warning. Fallback to HTML audio elements:", e);
@@ -1830,6 +1846,43 @@
           }, 850);
         } else if (bdayAudioElement) {
           bdayAudioElement.pause();
+        }
+      }
+
+      function playLastPageAudio() {
+        if (audioCtx && lastPageBuffer) {
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          if (lastPageSourceNode) {
+            try { lastPageSourceNode.stop(); lastPageSourceNode.disconnect(); } catch (e) {}
+          }
+          lastPageSourceNode = audioCtx.createBufferSource();
+          lastPageSourceNode.buffer = lastPageBuffer;
+          lastPageSourceNode.loop = true;
+
+          lastPageGainNode = audioCtx.createGain();
+          lastPageGainNode.gain.value = 1.0;
+
+          lastPageSourceNode.connect(lastPageGainNode);
+          lastPageGainNode.connect(audioCtx.destination);
+          lastPageSourceNode.start(0);
+        } else if (lastPageAudioElement) {
+          lastPageAudioElement.currentTime = 0;
+          lastPageAudioElement.loop = true;
+          lastPageAudioElement.play().catch(err => console.log("Last page audio playback warning:", err));
+        }
+      }
+
+      function stopLastPageAudio() {
+        if (lastPageGainNode && audioCtx) {
+          lastPageGainNode.gain.setValueAtTime(lastPageGainNode.gain.value, audioCtx.currentTime);
+          lastPageGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+          setTimeout(() => {
+            if (lastPageSourceNode) {
+              try { lastPageSourceNode.stop(); lastPageSourceNode.disconnect(); } catch (e) {}
+            }
+          }, 850);
+        } else if (lastPageAudioElement) {
+          lastPageAudioElement.pause();
         }
       }
 
@@ -2089,6 +2142,9 @@
         // Stop birthday instrumental audio
         stopBdayAudio();
 
+        // Play lounge instrumental music on last page (cyclic)
+        playLastPageAudio();
+
         switchPhase(phase4, phase5, () => {
           launchConfetti();
         });
@@ -2135,6 +2191,9 @@
 
       if (backToPhase4) {
         backToPhase4.addEventListener('click', () => {
+          // Stop last page audio
+          stopLastPageAudio();
+
           // Resume birthday instrumental audio
           playBdayInstrumental();
 
