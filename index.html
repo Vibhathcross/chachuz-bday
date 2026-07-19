@@ -446,85 +446,173 @@
       font-weight: 400;
     }
 
+    /* ==========================================================================
+       SPINNING GRADIENT ANIMATED CARDS (WISHES AREA)
+       ========================================================================== */
     .wishes-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 28px;
-      max-width: 1100px;
+      max-width: 1050px;
       width: 100%;
       margin: 0 auto;
-      perspective: 1000px;
+      justify-items: center;
     }
 
-    .neu-card {
-      background: var(--bg-phase3);
-      border-radius: 24px;
-      padding: 30px 25px;
+    .card {
+      width: 100%;
+      max-width: 320px;
+      height: 440px;
+      background: #141722;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0px 15px 35px rgba(255, 34, 136, 0.3);
+    }
+
+    .card .content {
+      border-radius: 15px;
+      background: #141722;
+      width: calc(100% - 6px);
+      height: calc(100% - 6px);
+      z-index: 1;
+      padding: 16px;
+      color: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 16px;
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 9px 9px 18px #b8c1ec, 
-                 -9px -9px 18px #ffffff;
-      transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.35s ease;
-    }
-
-    .neu-card:hover {
-      transform: translateY(-8px) rotateX(4deg) rotateY(-4deg);
-      box-shadow: 12px 12px 24px #b0baeb, 
-                 -12px -12px 24px #ffffff;
-    }
-
-    .neu-card:active {
-      transform: translateY(0);
-      box-shadow: inset 6px 6px 12px #b8c1ec, 
-                  inset -6px -6px 12px #ffffff;
-    }
-
-    .card-icon {
-      font-size: 2.2rem;
-      width: 55px;
-      height: 55px;
-      border-radius: 16px;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      background: var(--bg-phase3);
-      box-shadow: inset 3px 3px 6px #b8c1ec, 
-                  inset -3px -3px 6px #ffffff;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .content::before {
+      opacity: 0;
+      transition: opacity 300ms;
+      content: " ";
+      display: block;
+      background: white;
+      width: 5px;
+      height: 50px;
+      position: absolute;
+      filter: blur(50px);
+      overflow: hidden;
+    }
+
+    .card:hover .content::before {
+      opacity: 1;
+    }
+
+    .card::before {
+      opacity: 0;
+      content: " ";
+      position: absolute;
+      display: block;
+      width: 150px;
+      height: 580px;
+      background: linear-gradient(#ff2288, #387ef0);
+      transition: opacity 300ms;
+      animation: rotation_9018 8000ms infinite linear;
+      animation-play-state: paused;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+      animation-play-state: running;
+    }
+
+    .card::after {
+      position: absolute;
+      content: " ";
+      display: block;
+      width: 400px;
+      height: 580px;
+      background: #17171733;
+      backdrop-filter: blur(50px);
+    }
+
+    @keyframes rotation_9018 {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .card-img-wrapper {
+      width: 100%;
+      height: 185px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      margin-bottom: 10px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .card-wish-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-wish-img {
+      transform: scale(1.08);
     }
 
     .card-text {
-      font-size: 1.02rem;
-      line-height: 1.6;
-      color: #3e4c66;
-      font-weight: 400;
+      font-size: clamp(0.85rem, 2.8vw, 0.94rem);
+      line-height: 1.55;
+      color: #e2e8f0;
+      text-align: center;
+      font-weight: 300;
+      margin-bottom: 8px;
+      flex: 1;
+      display: flex;
+      align-items: center;
     }
 
     .card-footer {
+      width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
-      font-size: 0.85rem;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.88rem;
       font-weight: 600;
-      color: #6c7d9c;
+      color: #fda085;
     }
 
     .heart-btn {
-      border: none;
-      background: transparent;
-      font-size: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1rem;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, background 0.25s ease;
     }
 
     .heart-btn:hover {
-      transform: scale(1.3);
+      transform: scale(1.18);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .next-phase-container {
@@ -1647,63 +1735,87 @@
     </div>
 
     <div class="wishes-grid">
-      <!-- Neumorphic Card 1 -->
-      <div class="neu-card">
-        <div class="card-icon">✨</div>
-        <p class="card-text">May your special day be filled with happiness, surrounded by everyone you hold dear. Here's to a fantastic year ahead!</p>
-        <div class="card-footer">
-          <span>Joy & Warmth</span>
-          <button class="heart-btn" aria-label="Send Love">❤️</button>
+      <!-- Card 1 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish1.png" alt="Joy & Warmth" class="card-wish-img" />
+          </div>
+          <p class="card-text">May your special day be filled with happiness, surrounded by everyone you hold dear. Here's to a fantastic year ahead!</p>
+          <div class="card-footer">
+            <span>Joy & Warmth</span>
+            <button class="heart-btn" aria-label="Send Love">❤️</button>
+          </div>
         </div>
       </div>
 
-      <!-- Neumorphic Card 2 -->
-      <div class="neu-card">
-        <div class="card-icon">🌟</div>
-        <p class="card-text">May all your dreams and aspirations take flight this year. Keep shining bright and inspiring everyone around you!</p>
-        <div class="card-footer">
-          <span>Big Dreams</span>
-          <button class="heart-btn" aria-label="Send Love">💖</button>
+      <!-- Card 2 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish2.png" alt="Big Dreams" class="card-wish-img" />
+          </div>
+          <p class="card-text">May all your dreams and aspirations take flight this year. Keep shining bright and inspiring everyone around you!</p>
+          <div class="card-footer">
+            <span>Big Dreams</span>
+            <button class="heart-btn" aria-label="Send Love">💖</button>
+          </div>
         </div>
       </div>
 
-      <!-- Neumorphic Card 3 -->
-      <div class="neu-card">
-        <div class="card-icon">🌧️</div>
-        <p class="card-text">Just like peaceful rain brings life and freshness, may peace, comfort, and serenity always follow your path.</p>
-        <div class="card-footer">
-          <span>Peace & Calm</span>
-          <button class="heart-btn" aria-label="Send Love">💙</button>
+      <!-- Card 3 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish3.png" alt="Peace & Calm" class="card-wish-img" />
+          </div>
+          <p class="card-text">Just like peaceful rain brings life and freshness, may peace, comfort, and serenity always follow your path.</p>
+          <div class="card-footer">
+            <span>Peace & Calm</span>
+            <button class="heart-btn" aria-label="Send Love">💙</button>
+          </div>
         </div>
       </div>
 
-      <!-- Neumorphic Card 4 -->
-      <div class="neu-card">
-        <div class="card-icon">🎁</div>
-        <p class="card-text">Sending you the warmest birthday wishes wrapped in love, happiness, and unforgettable moments. Enjoy your day!</p>
-        <div class="card-footer">
-          <span>Best Wishes</span>
-          <button class="heart-btn" aria-label="Send Love">🎁</button>
+      <!-- Card 4 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish4.png" alt="Best Wishes" class="card-wish-img" />
+          </div>
+          <p class="card-text">Sending you the warmest birthday wishes wrapped in love, happiness, and unforgettable moments. Enjoy your day!</p>
+          <div class="card-footer">
+            <span>Best Wishes</span>
+            <button class="heart-btn" aria-label="Send Love">🎁</button>
+          </div>
         </div>
       </div>
 
-      <!-- Neumorphic Card 5 -->
-      <div class="neu-card">
-        <div class="card-icon">🥂</div>
-        <p class="card-text">Cheers to another year of creating wonderful memories, growing stronger, and celebrating all the beauty life brings!</p>
-        <div class="card-footer">
-          <span>Celebrate You</span>
-          <button class="heart-btn" aria-label="Send Love">🥂</button>
+      <!-- Card 5 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish5.png" alt="Celebrate You" class="card-wish-img" />
+          </div>
+          <p class="card-text">Cheers to another year of creating wonderful memories, growing stronger, and celebrating all the beauty life brings!</p>
+          <div class="card-footer">
+            <span>Celebrate You</span>
+            <button class="heart-btn" aria-label="Send Love">🥂</button>
+          </div>
         </div>
       </div>
 
-      <!-- Neumorphic Card 6 -->
-      <div class="neu-card">
-        <div class="card-icon">🌸</div>
-        <p class="card-text">May your life blossom with happiness and success. Stay blessed, stay awesome, and have the happiest birthday ever!</p>
-        <div class="card-footer">
-          <span>Endless Smiles</span>
-          <button class="heart-btn" aria-label="Send Love">💐</button>
+      <!-- Card 6 -->
+      <div class="card neu-card">
+        <div class="content">
+          <div class="card-img-wrapper">
+            <img src="wish6.png" alt="Endless Smiles" class="card-wish-img" />
+          </div>
+          <p class="card-text">May your life blossom with happiness and success. Stay blessed, stay awesome, and have the happiest birthday ever!</p>
+          <div class="card-footer">
+            <span>Endless Smiles</span>
+            <button class="heart-btn" aria-label="Send Love">💐</button>
+          </div>
         </div>
       </div>
     </div>
