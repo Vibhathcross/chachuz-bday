@@ -3213,7 +3213,7 @@
       <!-- Special Birthday Video Container (Replacing Cake Candle) -->
       <div id="bdayVideoWrapper" class="bday-video-wrapper">
         <div class="bday-video-card">
-          <video id="bdayCandleVideo" class="bday-candle-video" playsinline preload="auto">
+          <video id="bdayCandleVideo" class="bday-candle-video" playsinline muted preload="auto">
             <source src="make_a_vedio_of_a_beautifull.mp4?v=2" type="video/mp4">
             Your browser does not support the video tag.
           </video>
@@ -4144,6 +4144,7 @@
 
       function preparePhase5Video() {
         if (!bdayCandleVideo) return;
+        bdayCandleVideo.muted = true;
 
         const wishBadge = document.getElementById('wishGrantedBadge');
         if (wishBadge) wishBadge.classList.remove('show');
@@ -4175,6 +4176,7 @@
           createFloatingHeart(e.clientX, e.clientY);
           if (!bdayCandleVideo) return;
 
+          bdayCandleVideo.muted = true;
           makeWishVideoBtn.disabled = true;
           makeWishVideoBtn.classList.add('disabled');
 
