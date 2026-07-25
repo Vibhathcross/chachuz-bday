@@ -1800,6 +1800,88 @@
       touch-action: manipulation;
     }
 
+    /* Floating Intro Atmosphere Hearts */
+    .intro-floating-heart {
+      position: absolute;
+      bottom: -30px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.75;
+      animation: floatUpIntro 8s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(255, 64, 129, 0.6));
+    }
+
+    @keyframes floatUpIntro {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.8;
+      }
+      80% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-105vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* 360° Circular Audio Reactor */
+    .circular-reactor-wrapper {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 12px auto;
+    }
+
+    .circular-reactor-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .radial-bar {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 14px;
+      background: linear-gradient(180deg, #ffd700 0%, #ff4081 60%, #ab47bc 100%);
+      border-radius: 4px;
+      transform-origin: center 55px;
+      transform: translate(-50%, -55px) rotate(var(--angle));
+      opacity: 0.35;
+      box-shadow: 0 0 8px rgba(255, 64, 129, 0.4);
+      transition: height 0.2s ease, opacity 0.3s ease;
+    }
+
+    .playing .radial-bar,
+    .fantasy-song-overlay.active .radial-bar {
+      opacity: 1;
+      animation: radialReactorPulse 1.1s infinite ease-in-out alternate var(--delay);
+      box-shadow: 0 0 12px rgba(255, 64, 129, 0.9), 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    @keyframes radialReactorPulse {
+      0% {
+        height: 10px;
+        transform: translate(-50%, -55px) rotate(var(--angle)) scaleY(0.7);
+      }
+      100% {
+        height: 26px;
+        transform: translate(-50%, -55px) rotate(var(--angle)) scaleY(1.6);
+      }
+    }
+
     .audio-circle-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 12px 30px rgba(255, 64, 129, 0.7),
@@ -3097,36 +3179,49 @@
       <div class="special-song-card">
         <p class="special-song-sentence">A song specially for you 🎶✨</p>
         
-        <div class="audio-circle-wrapper">
-          <!-- Rhythmic Reactors (Left) -->
-          <div class="rhythmic-reactors">
-            <span class="bar bar-1"></span>
-            <span class="bar bar-2"></span>
-            <span class="bar bar-3"></span>
-            <span class="bar bar-4"></span>
-            <span class="bar bar-5"></span>
+        <div class="circular-reactor-wrapper">
+          <!-- 360° Radial Audio Reactor Equalizer Bars -->
+          <div class="circular-reactor-ring">
+            <span class="radial-bar" style="--angle: 0deg; --delay: 0.1s;"></span>
+            <span class="radial-bar" style="--angle: 22.5deg; --delay: 0.3s;"></span>
+            <span class="radial-bar" style="--angle: 45deg; --delay: 0.5s;"></span>
+            <span class="radial-bar" style="--angle: 67.5deg; --delay: 0.2s;"></span>
+            <span class="radial-bar" style="--angle: 90deg; --delay: 0.4s;"></span>
+            <span class="radial-bar" style="--angle: 112.5deg; --delay: 0.6s;"></span>
+            <span class="radial-bar" style="--angle: 135deg; --delay: 0.15s;"></span>
+            <span class="radial-bar" style="--angle: 157.5deg; --delay: 0.35s;"></span>
+            <span class="radial-bar" style="--angle: 180deg; --delay: 0.55s;"></span>
+            <span class="radial-bar" style="--angle: 202.5deg; --delay: 0.25s;"></span>
+            <span class="radial-bar" style="--angle: 225deg; --delay: 0.45s;"></span>
+            <span class="radial-bar" style="--angle: 247.5deg; --delay: 0.65s;"></span>
+            <span class="radial-bar" style="--angle: 270deg; --delay: 0.18s;"></span>
+            <span class="radial-bar" style="--angle: 292.5deg; --delay: 0.38s;"></span>
+            <span class="radial-bar" style="--angle: 315deg; --delay: 0.58s;"></span>
+            <span class="radial-bar" style="--angle: 337.5deg; --delay: 0.28s;"></span>
           </div>
 
-          <!-- Circular Play Button -->
-          <div class="audio-circle-container">
-            <div class="pulse-ring pulse-ring-1"></div>
-            <div class="pulse-ring pulse-ring-2"></div>
-            <button id="specialSongPlayBtn" class="audio-circle-btn" aria-label="Play Special Song">
-              <span id="specialSongPlayIcon" class="play-icon">▶</span>
-            </button>
-          </div>
-
-          <!-- Rhythmic Reactors (Right) -->
-          <div class="rhythmic-reactors">
-            <span class="bar bar-5"></span>
-            <span class="bar bar-4"></span>
-            <span class="bar bar-3"></span>
-            <span class="bar bar-2"></span>
-            <span class="bar bar-1"></span>
-          </div>
+          <div class="pulse-ring pulse-ring-1"></div>
+          <div class="pulse-ring pulse-ring-2"></div>
+          
+          <button id="specialSongPlayBtn" class="audio-circle-btn" aria-label="Play Special Song">
+            <span id="specialSongPlayIcon" class="play-icon">▶</span>
+          </button>
         </div>
 
         <p id="specialSongStatus" class="special-song-status">Tap to play 🎧</p>
+      </div>
+
+      <!-- Exit Full Screen Button (Centered at Bottom of Phase 5) -->
+      <div class="next-phase-container" style="margin-top: 35px; margin-bottom: 20px; width: 100%; display: flex; justify-content: center;">
+        <button id="exitFullscreenBtn" class="exit-fullscreen-btn">
+          <span>Exit Full Screen</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 14 10 14 10 20"></polyline>
+            <polyline points="20 10 14 10 14 4"></polyline>
+            <line x1="14" y1="10" x2="21" y2="3"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </button>
       </div>
 
       <!-- Hidden Special Song Audio Element -->
@@ -3145,27 +3240,32 @@
     <div class="fantasy-overlay-content">
       <h1 class="fantasy-animated-text">Its your day...Stay exited...😍</h1>
       
-      <div class="fantasy-audio-controls">
-        <div class="fantasy-equalizer">
-          <span class="bar bar-1"></span>
-          <span class="bar bar-2"></span>
-          <span class="bar bar-3"></span>
-          <span class="bar bar-4"></span>
-          <span class="bar bar-5"></span>
+      <div class="circular-reactor-wrapper fantasy-reactor-wrapper">
+        <div class="circular-reactor-ring">
+          <span class="radial-bar" style="--angle: 0deg; --delay: 0.1s;"></span>
+          <span class="radial-bar" style="--angle: 22.5deg; --delay: 0.3s;"></span>
+          <span class="radial-bar" style="--angle: 45deg; --delay: 0.5s;"></span>
+          <span class="radial-bar" style="--angle: 67.5deg; --delay: 0.2s;"></span>
+          <span class="radial-bar" style="--angle: 90deg; --delay: 0.4s;"></span>
+          <span class="radial-bar" style="--angle: 112.5deg; --delay: 0.6s;"></span>
+          <span class="radial-bar" style="--angle: 135deg; --delay: 0.15s;"></span>
+          <span class="radial-bar" style="--angle: 157.5deg; --delay: 0.35s;"></span>
+          <span class="radial-bar" style="--angle: 180deg; --delay: 0.55s;"></span>
+          <span class="radial-bar" style="--angle: 202.5deg; --delay: 0.25s;"></span>
+          <span class="radial-bar" style="--angle: 225deg; --delay: 0.45s;"></span>
+          <span class="radial-bar" style="--angle: 247.5deg; --delay: 0.65s;"></span>
+          <span class="radial-bar" style="--angle: 270deg; --delay: 0.18s;"></span>
+          <span class="radial-bar" style="--angle: 292.5deg; --delay: 0.38s;"></span>
+          <span class="radial-bar" style="--angle: 315deg; --delay: 0.58s;"></span>
+          <span class="radial-bar" style="--angle: 337.5deg; --delay: 0.28s;"></span>
         </div>
+
+        <div class="pulse-ring pulse-ring-1"></div>
+        <div class="pulse-ring pulse-ring-2"></div>
+
         <button id="fantasyPausePlayBtn" class="fantasy-circle-btn">❚❚</button>
-        <div class="fantasy-equalizer">
-          <span class="bar bar-5"></span>
-          <span class="bar bar-4"></span>
-          <span class="bar bar-3"></span>
-          <span class="bar bar-2"></span>
-          <span class="bar bar-1"></span>
-        </div>
       </div>
       <p class="fantasy-song-title">✨ Playing Your Dedicated Birthday Song 🎵</p>
-    </div>
-  </div>
-
     </div>
   </div>
 
@@ -3651,10 +3751,30 @@
         setTimeout(() => balloon.remove(), duration * 1000);
       }
 
+      function spawnFloatingIntroHeart(container) {
+        if (container.querySelectorAll('.intro-floating-heart').length > 25) return;
+        const heart = document.createElement('div');
+        heart.className = 'intro-floating-heart';
+        heart.innerHTML = ['💖', '💕', '❤️', '💗', '✨', '🌸'][Math.floor(Math.random() * 6)];
+        
+        const size = Math.random() * 12 + 12;
+        heart.style.fontSize = `${size}px`;
+        heart.style.left = `${Math.random() * 92}%`;
+        
+        const duration = Math.random() * 6 + 5;
+        heart.style.animationDuration = `${duration}s`;
+        
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), duration * 1000);
+      }
+
       function startPageAnimations(phaseId) {
         clearPageAnimations();
         if (phaseId === 'phase1') {
-          particleInterval = setInterval(() => spawnParticle(phase1), 400);
+          particleInterval = setInterval(() => {
+            spawnParticle(phase1);
+            spawnFloatingIntroHeart(phase1);
+          }, 450);
         } else if (phaseId === 'phase3') {
           particleInterval = setInterval(() => spawnParticle(phase3), 600);
           balloonInterval = setInterval(() => spawnBalloon(phase3), 1800);
