@@ -1733,6 +1733,635 @@
         padding: 12px 18px;
       }
     }
+
+    /* ==========================================================================
+       EXPANDED GLASSMORPHIC CARD MODAL
+       ========================================================================== */
+    .card.neu-card {
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease;
+    }
+
+    .card.neu-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 16px 35px rgba(255, 64, 129, 0.3);
+    }
+
+    .card.neu-card::after {
+      content: "✨ Click to Expand";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .card.neu-card:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .expanded-card-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .expanded-card-modal.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .expanded-card-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(6, 9, 18, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glass-expanded-card {
+      position: relative;
+      z-index: 2010;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(20, 26, 42, 0.88);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7),
+                  0 0 40px rgba(246, 211, 101, 0.2);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transform: scale(0.85) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+
+    .expanded-card-modal.active .glass-expanded-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .expanded-card-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2020;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+
+    .expanded-card-close-btn:hover {
+      background: rgba(255, 64, 129, 0.8);
+      transform: scale(1.15) rotate(90deg);
+      box-shadow: 0 0 15px rgba(255, 64, 129, 0.6);
+    }
+
+    .expanded-card-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .expanded-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .glass-expanded-card:hover .expanded-card-img {
+      transform: scale(1.05);
+    }
+
+    .expanded-card-tag-badge {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      background: linear-gradient(135deg, rgba(255, 64, 129, 0.9) 0%, rgba(123, 31, 162, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .expanded-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .expanded-card-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+      font-weight: 700;
+      color: #f6d365;
+      line-height: 1.3;
+      text-shadow: 0 2px 10px rgba(246, 211, 101, 0.3);
+    }
+
+    .expanded-card-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(0.95rem, 3.2vw, 1.08rem);
+      line-height: 1.7;
+      color: #e2e8f0;
+      font-weight: 300;
+    }
+
+    .expanded-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .expanded-nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .expanded-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .expanded-heart-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #ff4081 0%, #ab47bc 100%);
+      border: none;
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 64, 129, 0.4);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .expanded-heart-btn:hover {
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 64, 129, 0.6);
+    }
+
+    .expanded-heart-btn:active {
+      transform: scale(0.96);
+    }
+
+    @media (max-width: 520px) {
+      .glass-expanded-card {
+        padding: 18px;
+        border-radius: 22px;
+      }
+      .expanded-card-img-wrapper {
+        height: 210px;
+      }
+      .expanded-nav-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+      .expanded-heart-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* ==========================================================================
+       FLOATING CHAT WIDGET & CHATBOX
+       ========================================================================== */
+    .floating-chat-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1300;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, rgba(255, 64, 129, 0.88) 0%, rgba(123, 31, 162, 0.88) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 64, 129, 0.4),
+                  0 0 20px rgba(255, 255, 255, 0.2);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+    }
+
+    .floating-chat-btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 15px 35px rgba(255, 64, 129, 0.6),
+                  0 0 25px rgba(255, 255, 255, 0.4);
+    }
+
+    .floating-chat-btn:active {
+      transform: translateY(0) scale(0.97);
+    }
+
+    .chat-btn-icon {
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: heartPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .chat-unread-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ff1744;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      animation: badgePulse 1.5s infinite;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .chatbox-window {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      height: 520px;
+      max-height: calc(100vh - 120px);
+      z-index: 1350;
+      background: rgba(14, 17, 27, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6),
+                  0 0 30px rgba(246, 211, 101, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.92);
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .chatbox-window.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .chatbox-header {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chatbox-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chatbox-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(246, 211, 101, 0.3);
+      position: relative;
+    }
+
+    .chatbox-status-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 11px;
+      height: 11px;
+      background: #00e676;
+      border: 2px solid #0e111b;
+      border-radius: 50%;
+    }
+
+    .chatbox-title {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .chatbox-subtitle {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chatbox-close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .chatbox-close-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .chatbox-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+
+    .chatbox-messages::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chatbox-messages::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .chat-msg-time {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-align: center;
+      margin: 4px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chat-msg {
+      max-width: 84%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      word-break: break-word;
+      position: relative;
+      animation: msgSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes msgSlideIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .chat-msg.outgoing {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #ff4081 0%, #ab47bc 100%);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 15px rgba(255, 64, 129, 0.25);
+    }
+
+    .chat-msg.incoming {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .chat-msg-meta {
+      font-size: 0.65rem;
+      opacity: 0.75;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .chat-quick-chips {
+      padding: 8px 14px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.15);
+      scrollbar-width: none;
+    }
+
+    .chat-quick-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chat-chip {
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-chip:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .chatbox-footer {
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chatbox-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 10px 16px;
+      color: #ffffff;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .chatbox-input::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .chatbox-input:focus {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(246, 211, 101, 0.6);
+      box-shadow: 0 0 12px rgba(246, 211, 101, 0.2);
+    }
+
+    .chatbox-send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      border: none;
+      color: #2d3748;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(246, 211, 101, 0.3);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .chatbox-send-btn:hover {
+      transform: scale(1.1) rotate(-10deg);
+      box-shadow: 0 6px 18px rgba(246, 211, 101, 0.5);
+    }
+
+    .chatbox-send-btn:active {
+      transform: scale(0.95);
+    }
+
+    @media (max-width: 480px) {
+      .floating-chat-btn {
+        bottom: 18px;
+        right: 18px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        justify-content: center;
+        padding: 0;
+      }
+      .chat-btn-text {
+        display: none;
+      }
+      .chat-btn-icon {
+        font-size: 1.4rem;
+      }
+      .chatbox-window {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 75px;
+        height: 480px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2090,6 +2719,81 @@
     </div>
   </div>
 
+  <!-- Expanded Glassmorphic Card Modal -->
+  <div id="expandedCardModal" class="expanded-card-modal" aria-label="Expanded Wish Card">
+    <div class="expanded-card-backdrop"></div>
+    <div class="glass-expanded-card">
+      <button id="closeExpandedCardBtn" class="expanded-card-close-btn" aria-label="Close Card">&times;</button>
+      <div class="expanded-card-img-wrapper">
+        <img id="expandedCardImg" src="" alt="Wish Image" class="expanded-card-img" />
+        <div id="expandedCardTag" class="expanded-card-tag-badge">Joy & Warmth</div>
+      </div>
+      <div class="expanded-card-body">
+        <h2 id="expandedCardTitle" class="expanded-card-title">Wish Title</h2>
+        <p id="expandedCardText" class="expanded-card-text">Wish full text goes here...</p>
+        
+        <div class="expanded-card-actions">
+          <button id="expandedCardPrevBtn" class="expanded-nav-btn" aria-label="Previous Wish">← Prev</button>
+          <button id="expandedCardHeartBtn" class="expanded-heart-btn" aria-label="Send Love">
+            <span id="expandedCardEmoji" class="expanded-heart-emoji">❤️</span>
+            <span>Send Love</span>
+          </button>
+          <button id="expandedCardNextBtn" class="expanded-nav-btn" aria-label="Next Wish">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Chat Launcher Button -->
+  <button id="floatingChatBtn" class="floating-chat-btn" aria-label="Open Chat">
+    <span class="chat-btn-icon">💬</span>
+    <span class="chat-btn-text">Chat with me 💖</span>
+    <span id="chatUnreadBadge" class="chat-unread-badge">0</span>
+  </button>
+
+  <!-- Floating Chatbox Window -->
+  <div id="chatboxWindow" class="chatbox-window" aria-label="Chat Box">
+    <div class="chatbox-header">
+      <div class="chatbox-header-info">
+        <div class="chatbox-avatar">
+          <span>👦</span>
+          <span class="chatbox-status-dot"></span>
+        </div>
+        <div>
+          <div class="chatbox-title">Vibhath 💖</div>
+          <div class="chatbox-subtitle"><span>●</span> Live Telegram Sync</div>
+        </div>
+      </div>
+      <button id="chatboxCloseBtn" class="chatbox-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+
+    <div id="chatboxMessages" class="chatbox-messages">
+      <!-- Welcome message -->
+      <div class="chat-msg-time">Today</div>
+      <div class="chat-msg incoming">
+        Hey! Send me a message here anytime 💖 It delivers directly to my phone via Telegram! 💌
+        <div class="chat-msg-meta">Vibhath • Just now</div>
+      </div>
+    </div>
+
+    <div class="chat-quick-chips">
+      <button class="chat-chip" data-text="Happy Birthday! 🥳🎉">🥳 Happy Bday!</button>
+      <button class="chat-chip" data-text="Loved the surprise! 💖✨">💖 Loved it!</button>
+      <button class="chat-chip" data-text="Sending you big hugs! 🤗💕">🤗 Big Hugs!</button>
+      <button class="chat-chip" data-text="Miss you! 🌟">🌟 Miss you!</button>
+    </div>
+
+    <div class="chatbox-footer">
+      <input id="chatboxInput" class="chatbox-input" type="text" placeholder="Type a message..." maxlength="500" />
+      <button id="chatboxSendBtn" class="chatbox-send-btn" aria-label="Send Message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <!-- ==========================================================================
        JAVASCRIPT LOGIC
        ========================================================================== -->
@@ -2383,8 +3087,9 @@
               lastTelegramUpdateId = Math.max(lastTelegramUpdateId, update.update_id);
               if (update.message && update.message.text) {
                 const msgText = update.message.text;
-                if (!msgText.includes('Sent from Birthday Wish App')) {
+                if (!msgText.includes('Sent from Birthday Wish App') && !msgText.includes('Sent from Bday Chatbox')) {
                   showGlassMessagePopup(msgText);
+                  handleIncomingTelegramReply(msgText);
                 }
               }
             });
@@ -2962,6 +3667,272 @@
           if (e.key === 'Enter') sendBrotherMsgToTelegram();
         });
       }
+
+      // ----------------------------------------------------------------------
+      // EXPANDED GLASSMORPHIC CARD MODAL LOGIC
+      // ----------------------------------------------------------------------
+      const expandedCardModal = document.getElementById('expandedCardModal');
+      const expandedCardBackdrop = expandedCardModal ? expandedCardModal.querySelector('.expanded-card-backdrop') : null;
+      const closeExpandedCardBtn = document.getElementById('closeExpandedCardBtn');
+      const expandedCardImg = document.getElementById('expandedCardImg');
+      const expandedCardTag = document.getElementById('expandedCardTag');
+      const expandedCardTitle = document.getElementById('expandedCardTitle');
+      const expandedCardText = document.getElementById('expandedCardText');
+      const expandedCardEmoji = document.getElementById('expandedCardEmoji');
+      const expandedCardPrevBtn = document.getElementById('expandedCardPrevBtn');
+      const expandedCardNextBtn = document.getElementById('expandedCardNextBtn');
+      const expandedCardHeartBtn = document.getElementById('expandedCardHeartBtn');
+
+      let currentCardIndex = 0;
+      const wishCardsData = [];
+
+      // Collect data from each .neu-card in Phase 3
+      const wishCardElements = document.querySelectorAll('#phase3 .neu-card');
+      wishCardElements.forEach((cardEl, idx) => {
+        const imgEl = cardEl.querySelector('.card-wish-img');
+        const textEl = cardEl.querySelector('.card-text');
+        const footerSpan = cardEl.querySelector('.card-footer span');
+        const heartBtn = cardEl.querySelector('.heart-btn');
+
+        const cardData = {
+          imgSrc: imgEl ? imgEl.getAttribute('src') : '',
+          tag: footerSpan ? footerSpan.textContent.trim() : 'Wish',
+          title: footerSpan ? footerSpan.textContent.trim() : `Wish #${idx + 1}`,
+          text: textEl ? textEl.textContent.trim() : '',
+          emoji: heartBtn ? heartBtn.textContent.trim() : '❤️'
+        };
+
+        wishCardsData.push(cardData);
+
+        // Click handler to expand card
+        cardEl.addEventListener('click', (e) => {
+          if (e.target.closest('.heart-btn')) {
+            createFloatingHeart(e.clientX, e.clientY);
+          }
+          openExpandedCard(idx);
+        });
+      });
+
+      function openExpandedCard(index) {
+        if (index < 0) index = wishCardsData.length - 1;
+        if (index >= wishCardsData.length) index = 0;
+
+        currentCardIndex = index;
+        const data = wishCardsData[currentCardIndex];
+
+        if (!data) return;
+
+        expandedCardImg.src = data.imgSrc;
+        expandedCardTag.textContent = data.tag;
+        expandedCardTitle.textContent = data.title;
+        expandedCardText.textContent = data.text;
+        expandedCardEmoji.textContent = data.emoji;
+
+        expandedCardModal.classList.add('active');
+        launchConfetti();
+      }
+
+      function closeExpandedCard() {
+        if (expandedCardModal) expandedCardModal.classList.remove('active');
+      }
+
+      if (closeExpandedCardBtn) closeExpandedCardBtn.addEventListener('click', closeExpandedCard);
+      if (expandedCardBackdrop) expandedCardBackdrop.addEventListener('click', closeExpandedCard);
+
+      if (expandedCardPrevBtn) {
+        expandedCardPrevBtn.addEventListener('click', () => {
+          openExpandedCard(currentCardIndex - 1);
+        });
+      }
+
+      if (expandedCardNextBtn) {
+        expandedCardNextBtn.addEventListener('click', () => {
+          openExpandedCard(currentCardIndex + 1);
+        });
+      }
+
+      if (expandedCardHeartBtn) {
+        expandedCardHeartBtn.addEventListener('click', (e) => {
+          createFloatingHeart(e.clientX, e.clientY);
+          createFloatingHeart(e.clientX - 30, e.clientY - 20);
+          createFloatingHeart(e.clientX + 30, e.clientY - 20);
+        });
+      }
+
+      // Keyboard navigation support for expanded modal
+      document.addEventListener('keydown', (e) => {
+        if (!expandedCardModal || !expandedCardModal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeExpandedCard();
+        if (e.key === 'ArrowLeft') openExpandedCard(currentCardIndex - 1);
+        if (e.key === 'ArrowRight') openExpandedCard(currentCardIndex + 1);
+      });
+
+      // ----------------------------------------------------------------------
+      // FLOATING CHATBOX & TELEGRAM LIVE CHAT INTEGRATION
+      // ----------------------------------------------------------------------
+      const floatingChatBtn = document.getElementById('floatingChatBtn');
+      const chatboxWindow = document.getElementById('chatboxWindow');
+      const chatboxCloseBtn = document.getElementById('chatboxCloseBtn');
+      const chatboxMessages = document.getElementById('chatboxMessages');
+      const chatboxInput = document.getElementById('chatboxInput');
+      const chatboxSendBtn = document.getElementById('chatboxSendBtn');
+      const chatUnreadBadge = document.getElementById('chatUnreadBadge');
+      const quickChips = document.querySelectorAll('.chat-chip');
+
+      let unreadCount = 0;
+      let chatHistory = [];
+
+      // Load Chat History from LocalStorage
+      try {
+        const savedHistory = localStorage.getItem('bday_chat_history');
+        if (savedHistory) {
+          chatHistory = JSON.parse(savedHistory);
+          renderChatHistory();
+        }
+      } catch (e) {
+        console.log('Error reading chat history:', e);
+      }
+
+      function saveChatHistory() {
+        try {
+          localStorage.setItem('bday_chat_history', JSON.stringify(chatHistory));
+        } catch (e) {}
+      }
+
+      function renderChatHistory() {
+        if (!chatHistory || chatHistory.length === 0) return;
+        chatHistory.forEach(msg => {
+          appendMessageToDOM(msg.text, msg.type, msg.time, false);
+        });
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        if (chatboxMessages) {
+          chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+        }
+      }
+
+      function getCurrentTimeStr() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function appendMessageToDOM(text, type, timeStr = getCurrentTimeStr(), animate = true) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chat-msg ${type}`;
+        if (!animate) msgDiv.style.animation = 'none';
+
+        const senderLabel = type === 'outgoing' ? 'You' : 'Vibhath';
+
+        msgDiv.innerHTML = `
+          ${escapeHtml(text)}
+          <div class="chat-msg-meta">
+            ${senderLabel} • ${timeStr} ${type === 'outgoing' ? '✓✓' : ''}
+          </div>
+        `;
+
+        chatboxMessages.appendChild(msgDiv);
+        scrollToBottom();
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function toggleChatbox() {
+        const isActive = chatboxWindow.classList.contains('active');
+        if (isActive) {
+          chatboxWindow.classList.remove('active');
+        } else {
+          chatboxWindow.classList.add('active');
+          unreadCount = 0;
+          updateUnreadBadge();
+          scrollToBottom();
+          if (chatboxInput) chatboxInput.focus();
+        }
+      }
+
+      function updateUnreadBadge() {
+        if (unreadCount > 0 && !chatboxWindow.classList.contains('active')) {
+          chatUnreadBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+          chatUnreadBadge.style.display = 'flex';
+        } else {
+          chatUnreadBadge.style.display = 'none';
+        }
+      }
+
+      function sendChatMessage() {
+        const text = chatboxInput ? chatboxInput.value.trim() : '';
+        if (!text) return;
+
+        const timeStr = getCurrentTimeStr();
+
+        // Render outgoing message
+        appendMessageToDOM(text, 'outgoing', timeStr);
+        chatHistory.push({ text, type: 'outgoing', time: timeStr });
+        saveChatHistory();
+
+        if (chatboxInput) chatboxInput.value = '';
+
+        // Dispatch to Telegram
+        const chatId = '1208823196';
+        const telegramPayload = `💬 Live Chat from Bday Girl:\n\n"${text}"\n\n(Sent from Bday Chatbox 🎂)`;
+
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text: telegramPayload })
+        }).catch(err => console.log('Telegram dispatch error:', err));
+      }
+
+      function handleIncomingTelegramReply(text) {
+        const timeStr = getCurrentTimeStr();
+        appendMessageToDOM(text, 'incoming', timeStr);
+        chatHistory.push({ text, type: 'incoming', time: timeStr });
+        saveChatHistory();
+
+        if (!chatboxWindow.classList.contains('active')) {
+          unreadCount++;
+          updateUnreadBadge();
+        }
+      }
+
+      if (floatingChatBtn) {
+        floatingChatBtn.addEventListener('click', (e) => {
+          createFloatingHeart(e.clientX, e.clientY);
+          toggleChatbox();
+        });
+      }
+
+      if (chatboxCloseBtn) {
+        chatboxCloseBtn.addEventListener('click', toggleChatbox);
+      }
+
+      if (chatboxSendBtn) {
+        chatboxSendBtn.addEventListener('click', sendChatMessage);
+      }
+
+      if (chatboxInput) {
+        chatboxInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') sendChatMessage();
+        });
+      }
+
+      quickChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const text = chip.getAttribute('data-text');
+          if (text) {
+            chatboxInput.value = text;
+            sendChatMessage();
+          }
+        });
+      });
 
       // ----------------------------------------------------------------------
       // INTERACTIVE HEARTS ON CARD CLICK
