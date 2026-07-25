@@ -2823,6 +2823,74 @@
       transform: scale(0.95);
     }
 
+    /* Intro Preloader Progress Bar */
+    .intro-preloader {
+      width: 100%;
+      max-width: 380px;
+      margin: 16px auto 22px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-sizing: border-box;
+    }
+
+    .preloader-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .preloader-percent {
+      font-weight: 700;
+      color: #f6d365;
+    }
+
+    .preloader-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preloader-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff4081 0%, #fda085 50%, #ffd700 100%);
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(255, 64, 129, 0.8);
+      transition: width 0.3s ease;
+    }
+
+    .enter-btn.loading-state {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .enter-btn.ready-state {
+      opacity: 1;
+      cursor: pointer;
+      pointer-events: auto;
+      animation: pulseEnterReady 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseEnterReady {
+      0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 64, 129, 0.4); }
+      50% { transform: scale(1.04); box-shadow: 0 15px 40px rgba(255, 64, 129, 0.7), 0 0 20px rgba(246, 211, 101, 0.5); }
+    }
+
     @media (max-width: 480px) {
       .floating-chat-btn {
         bottom: 18px;
@@ -2904,7 +2972,18 @@
         <span>Please use earphones for the best experience</span>
       </div>
 
-      <button id="enterBtn" class="enter-btn">
+      <!-- Preloader Container on Phase 1 -->
+      <div id="introPreloader" class="intro-preloader">
+        <div class="preloader-header">
+          <span id="preloaderStatus" class="preloader-status">Preloading media assets... ✨</span>
+          <span id="preloaderPercent" class="preloader-percent">0%</span>
+        </div>
+        <div class="preloader-track">
+          <div id="preloaderFill" class="preloader-fill"></div>
+        </div>
+      </div>
+
+      <button id="enterBtn" class="enter-btn loading-state" disabled>
         <span>Click to Enter & Switch to Full Screen</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
@@ -3417,6 +3496,85 @@
       // WEB AUDIO API FOR TRUE GAPLESS SEAMLESS LOOPING
       // ----------------------------------------------------------------------
       let audioCtx = null;
+      // ----------------------------------------------------------------------
+      // MEDIA ASSETS PRELOADER ENGINE (VIDEOS, IMAGES, AUDIO)
+      // ----------------------------------------------------------------------
+      const assetsToPreload = [
+        { type: 'video', url: 'vidrain.mp4' },
+        { type: 'video', url: 'make_a_vedio_of_a_beautifull.mp4?v=2' },
+        { type: 'image', url: 'wish1.png' },
+        { type: 'image', url: 'wish2.png' },
+        { type: 'image', url: 'wish3.png' },
+        { type: 'image', url: 'wish4.png' },
+        { type: 'image', url: 'wish5.png' },
+        { type: 'image', url: 'wish6.png' },
+        { type: 'image', url: 'special_photo.jpg' },
+        { type: 'audio', url: 'rain_sound.mp3' },
+        { type: 'audio', url: 'special_song.mp3' }
+      ];
+
+      let loadedCount = 0;
+      const totalAssets = assetsToPreload.length;
+
+      function updatePreloaderUI() {
+        const percent = Math.min(100, Math.floor((loadedCount / totalAssets) * 100));
+        const preloaderFill = document.getElementById('preloaderFill');
+        const preloaderPercent = document.getElementById('preloaderPercent');
+        const preloaderStatus = document.getElementById('preloaderStatus');
+        const enterBtn = document.getElementById('enterBtn');
+
+        if (preloaderFill) preloaderFill.style.width = `${percent}%`;
+        if (preloaderPercent) preloaderPercent.textContent = `${percent}%`;
+        if (preloaderStatus) preloaderStatus.textContent = `Loading media... (${loadedCount}/${totalAssets})`;
+
+        if (percent >= 100 && enterBtn) {
+          enterBtn.disabled = false;
+          enterBtn.classList.remove('loading-state');
+          enterBtn.classList.add('ready-state');
+          if (preloaderStatus) preloaderStatus.textContent = '✨ Everything loaded & ready! 🎉';
+        }
+      }
+
+      function preloadAsset(asset) {
+        return new Promise((resolve) => {
+          if (asset.type === 'image') {
+            const img = new Image();
+            img.onload = img.onerror = () => {
+              loadedCount++;
+              updatePreloaderUI();
+              resolve();
+            };
+            img.src = asset.url;
+          } else if (asset.type === 'video') {
+            const req = new XMLHttpRequest();
+            req.open('GET', asset.url, true);
+            req.responseType = 'blob';
+            req.onload = req.onerror = () => {
+              loadedCount++;
+              updatePreloaderUI();
+              resolve();
+            };
+            req.send();
+          } else if (asset.type === 'audio') {
+            const audio = new Audio();
+            audio.oncanplaythrough = audio.onerror = () => {
+              loadedCount++;
+              updatePreloaderUI();
+              resolve();
+            };
+            audio.src = asset.url;
+          } else {
+            loadedCount++;
+            updatePreloaderUI();
+            resolve();
+          }
+        });
+      }
+
+      // Trigger preloading immediately
+      Promise.all(assetsToPreload.map(preloadAsset)).then(() => {
+        console.log("All media assets preloaded successfully!");
+      });
       let rainBuffer = null;
       let rainSourceNode = null;
       let rainGainNode = null;
