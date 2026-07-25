@@ -1994,41 +1994,48 @@
     }
 
     /* ==========================================================================
-       FLOATING CHAT WIDGET & CHATBOX
+       FLOATING CHAT WIDGET & CHATBOX (TOP-LEFT POSITION)
        ========================================================================== */
     .floating-chat-btn {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      top: 20px;
+      left: 20px;
       z-index: 1300;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 20px;
-      border-radius: 50px;
-      background: linear-gradient(135deg, rgba(255, 64, 129, 0.88) 0%, rgba(123, 31, 162, 0.88) 100%);
+      justify-content: center;
+      padding: 0;
+      background: linear-gradient(135deg, rgba(255, 64, 129, 0.9) 0%, rgba(123, 31, 162, 0.9) 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid rgba(255, 255, 255, 0.35);
       color: #ffffff;
       font-family: var(--font-body);
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 1.2rem;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(255, 64, 129, 0.4),
-                  0 0 20px rgba(255, 255, 255, 0.2);
-      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.45),
+                  0 0 15px rgba(255, 255, 255, 0.2);
+      transition: left 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  transform 0.35s ease,
+                  box-shadow 0.35s ease;
       user-select: none;
     }
 
+    body.has-active-back-btn .floating-chat-btn {
+      left: 72px;
+    }
+
     .floating-chat-btn:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 15px 35px rgba(255, 64, 129, 0.6),
+      transform: scale(1.1);
+      box-shadow: 0 12px 30px rgba(255, 64, 129, 0.6),
                   0 0 25px rgba(255, 255, 255, 0.4);
     }
 
     .floating-chat-btn:active {
-      transform: translateY(0) scale(0.97);
+      transform: scale(0.95);
     }
 
     .chat-btn-icon {
@@ -2046,14 +2053,14 @@
 
     .chat-unread-badge {
       position: absolute;
-      top: -4px;
-      right: -4px;
+      top: -3px;
+      right: -3px;
       background: #ff1744;
       color: #ffffff;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: none;
       align-items: center;
@@ -2070,28 +2077,36 @@
 
     .chatbox-window {
       position: fixed;
-      bottom: 90px;
-      right: 24px;
+      top: 75px;
+      left: 20px;
       width: 360px;
       max-width: calc(100vw - 32px);
       height: 520px;
-      max-height: calc(100vh - 120px);
+      max-height: calc(100vh - 95px);
       z-index: 1350;
-      background: rgba(14, 17, 27, 0.92);
+      background: rgba(14, 17, 27, 0.94);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1.5px solid rgba(255, 255, 255, 0.2);
       border-radius: 24px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6),
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65),
                   0 0 30px rgba(246, 211, 101, 0.15);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(20px) scale(0.92);
+      transform: translateY(-10px) scale(0.92);
+      transform-origin: top left;
       pointer-events: none;
-      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: left 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  opacity 0.35s ease,
+                  transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  visibility 0.35s ease;
+    }
+
+    body.has-active-back-btn .chatbox-window {
+      left: 72px;
     }
 
     .chatbox-window.active {
@@ -2745,9 +2760,8 @@
   </div>
 
   <!-- Floating Chat Launcher Button -->
-  <button id="floatingChatBtn" class="floating-chat-btn" aria-label="Open Chat">
+  <button id="floatingChatBtn" class="floating-chat-btn" aria-label="Open Live Chat">
     <span class="chat-btn-icon">💬</span>
-    <span class="chat-btn-text">Chat with me 💖</span>
     <span id="chatUnreadBadge" class="chat-unread-badge">0</span>
   </button>
 
@@ -3220,9 +3234,15 @@
       // Initialize animation on first phase
       startPageAnimations('phase1');
 
+      function updateBackBtnState(phase) {
+        const hasBack = !!(phase && phase.querySelector('.back-btn'));
+        document.body.classList.toggle('has-active-back-btn', hasBack);
+      }
+
       function switchPhase(fromPhase, toPhase, callback) {
         fromPhase.classList.remove('active');
         clearPageAnimations();
+        updateBackBtnState(toPhase);
         setTimeout(() => {
           toPhase.classList.add('active');
           startPageAnimations(toPhase.id);
