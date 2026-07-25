@@ -1999,19 +1999,19 @@
       visibility: visible;
     }
 
-    .fantasy-exit-btn {
+    .fantasy-back-btn {
       position: absolute;
       top: 24px;
-      right: 28px;
+      left: 24px;
       padding: 10px 22px;
       border-radius: 30px;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.14);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
       color: #ffffff;
       font-family: var(--font-body);
-      font-size: clamp(0.85rem, 3vw, 0.95rem);
+      font-size: clamp(0.88rem, 3vw, 1rem);
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -2023,11 +2023,32 @@
       touch-action: manipulation;
     }
 
-    .fantasy-exit-btn:hover {
-      background: rgba(255, 64, 129, 0.4);
-      border-color: rgba(255, 64, 129, 0.7);
+    .fantasy-back-btn:hover {
+      background: rgba(255, 64, 129, 0.45);
+      border-color: rgba(255, 64, 129, 0.8);
       transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 12px 30px rgba(255, 64, 129, 0.5);
+      box-shadow: 0 12px 30px rgba(255, 64, 129, 0.6);
+    }
+
+    .musical-pointer-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 2520;
+      color: #ff4081;
+      text-shadow: 0 0 10px rgba(255, 64, 129, 0.9), 0 0 20px rgba(255, 215, 0, 0.7);
+      animation: musicalFlourish 1.2s ease-out forwards;
+      opacity: 0.95;
+    }
+
+    @keyframes musicalFlourish {
+      0% {
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+        opacity: 0.95;
+      }
+      100% {
+        transform: translate(var(--tx, 0px), var(--ty, -60px)) scale(1.4) rotate(var(--rot, 90deg));
+        opacity: 0;
+      }
     }
 
     .love-rain-container {
@@ -3233,8 +3254,8 @@
   <div id="fantasySongOverlay" class="fantasy-song-overlay">
     <div id="loveRainContainer" class="love-rain-container"></div>
 
-    <button id="closeFantasyOverlayBtn" class="fantasy-exit-btn" aria-label="Exit Full Screen">
-      <span>Exit Full Screen</span> <span>✕</span>
+    <button id="closeFantasyOverlayBtn" class="fantasy-back-btn" aria-label="Go Back">
+      <span>← Go Back</span>
     </button>
     
     <div class="fantasy-overlay-content">
@@ -4200,6 +4221,63 @@
         fantasyPausePlayBtn.addEventListener('click', (e) => {
           createFloatingHeart(e.clientX, e.clientY);
           toggleSpecialSong();
+        });
+      }
+
+      // Musical Flourish Pointer Trail Effect on Fantasy Overlay
+      let lastPointerTime = 0;
+
+      function spawnMusicalPointerParticle(x, y) {
+        if (!fantasySongOverlay || !fantasySongOverlay.classList.contains('active')) return;
+
+        const musicalSymbols = ['🎵', '🎶', '🎼', '✨', '💫', '💖', '🌟', '𝄢', '🌸'];
+        const particle = document.createElement('div');
+        particle.className = 'musical-pointer-particle';
+        particle.textContent = musicalSymbols[Math.floor(Math.random() * musicalSymbols.length)];
+        
+        const offsetX = (Math.random() * 40 - 20);
+        const offsetY = (Math.random() * 40 - 20);
+        
+        particle.style.left = `${x + offsetX}px`;
+        particle.style.top = `${y + offsetY}px`;
+        particle.style.fontSize = `${Math.random() * 14 + 14}px`;
+        
+        const tx = (Math.random() * 60 - 30);
+        const ty = -(Math.random() * 80 + 30);
+        const rot = Math.random() * 360 - 180;
+        
+        particle.style.setProperty('--tx', `${tx}px`);
+        particle.style.setProperty('--ty', `${ty}px`);
+        particle.style.setProperty('--rot', `${rot}deg`);
+        
+        fantasySongOverlay.appendChild(particle);
+        setTimeout(() => particle.remove(), 1200);
+      }
+
+      if (fantasySongOverlay) {
+        fantasySongOverlay.addEventListener('mousemove', (e) => {
+          const now = Date.now();
+          if (now - lastPointerTime > 60) {
+            lastPointerTime = now;
+            spawnMusicalPointerParticle(e.clientX, e.clientY);
+          }
+        });
+
+        fantasySongOverlay.addEventListener('touchmove', (e) => {
+          const now = Date.now();
+          if (now - lastPointerTime > 60 && e.touches.length > 0) {
+            lastPointerTime = now;
+            const touch = e.touches[0];
+            spawnMusicalPointerParticle(touch.clientX, touch.clientY);
+          }
+        });
+
+        fantasySongOverlay.addEventListener('click', (e) => {
+          if (!e.target.closest('#closeFantasyOverlayBtn, #fantasyPausePlayBtn')) {
+            for (let i = 0; i < 5; i++) {
+              spawnMusicalPointerParticle(e.clientX, e.clientY);
+            }
+          }
         });
       }
 
